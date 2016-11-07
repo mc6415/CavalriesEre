@@ -14,7 +14,7 @@ var log = function(entry) {
     fs.appendFileSync('/tmp/sample-app.log', new Date().toISOString() + ' - ' + entry + '\n');
 };
 
-mongoose.connect('mongodb://mc6415:owpotg@ds033956.mlab.com:33956/ow_potg');
+mongoose.connect('mongodb://52.209.245.166:27018/overwankers');
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/public/views');
 
