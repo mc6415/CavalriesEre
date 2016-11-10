@@ -1,0 +1,32 @@
+div#registrationForm(style='display:none')
+  link(href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300', rel='stylesheet', type='text/css')
+  .container-fluid
+    form.register-form(action='/user/create', method='POST', encType='multipart/form-data', style="font-family: 'Open Sans Condensed', sans-serif;font-size: 18px;padding-top:55rem")
+      .row
+        .col-md-4.col-sm-4.col-lg-4
+          label(for='forename') FIRST NAME
+          input.form-control(name='forename', type='text')
+      .row
+        .col-md-4.col-sm-4.col-lg-4
+          label(for='surname') LAST NAME
+          input.form-control(name='surname', type='text')
+      .row
+        .col-md-4.col-sm-4.col-lg-4
+          label(for='username') USERNAME
+          input.form-control(name='username', type='text')
+      .row
+        .col-md-4.col-sm-4.col-lg-4
+          label(for='email') EMAIL
+          input.form-control(name='email', type='email')
+      .row
+        .col-md-4.col-sm-4.col-lg-4
+          label(for='password') PASSWORD
+          input.form-control(name='password', type='password')
+      .row
+        .col-md-4.col-sm-4.col-lg-4
+          label(for='pic') PROFILE PIC
+          input.form-control(name='pic', type='file')
+      hr
+      .row
+        .col-md-6.col-sm-6.col-xs-6.col-lg-6.col-xs-offset-3
+          button.btn.btn-default.regbutton Register

@@ -1,6 +1,25 @@
-var User = require('../models/user');
+const User = require('../models/user');
+const sha256 = require('sha256');
+const randomstring = require('randomstring');
 
 module.exports.create = function(req,res){
+  const user = new User();
+  const salt = randomstring.generate(10);
+  const pepper = randomstring.generate(10);
+
+  user.username = req.body.username;
+  user.email = req.body.email;
+  user.salt = salt;
+  user.pepper = pepper;
+  user.password = sha256(user.salt) + sha256(req.body.password) + sha256(pepper);
+  user.firstName = req.body.forename;
+  user.lastName = req.body.surname;
+  if(typeof(req.file) != 'undefined'){
+    user.profilePic = req.file.buffer.toString('base64');
+  }
+
+  user.save();
+  res.redirect('/');
 }
 
 
