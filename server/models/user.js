@@ -7,5 +7,6 @@ module.exports = mongoose.model('User', {
   salt: {type: String, required: true},
   firstName: {type: String},
   lastName: {type: String},
-  battletag: {type: String}
+  battletag: {type: String},
+  profilePic: {type: String}
 })
