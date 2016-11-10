@@ -1,32 +1,4 @@
 html
   include ./head.pug
   body
-    style.
-        body, html{
-          background-color:#34515E;
-        }
-    .container-fluid
-    .row
-      .col-md-2.col-sm-4.sidebar1(style='height:100%;padding:0px')
-        .logo
-          - var defaultLogo = '/img/bastionCute.png'
-          if loggedIn
-            defaultLogo = user.logo
-          img.img-responsive.center-block(src=defaultLogo, alt='Logo', style='width:8rem')
-        br
-        .left-navigation
-          ul.list
-            h5
-              strong OverWankers
-            li#showRegister(style='cursor:pointer') Register
-            li About Us
-            li Discord Server
-          br
-          ul.list
-            h5
-              strong
-            li
-            li
-            li
-      .col-md-10.col-sm-8.main-content
-        block content
+    block content

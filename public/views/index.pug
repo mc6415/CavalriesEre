@@ -1,12 +1,6 @@
 extends ./layout.pug
 
-block header
-  meta(author='Michael Coombes')
-
 block content
-  if !loggedIn
-    include ./register.pug
-  script.
-    $('#showRegister').click(function(){
-          $('#registrationForm').show();
-    })
+  div(style='text-align:center')
+    h1 Under Construction
+    img(src='http://vignette1.wikia.nocookie.net/overwatch/images/6/6a/Bastion_portrait.png/revision/latest?cb=20160429042023')
