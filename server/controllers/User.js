@@ -18,12 +18,10 @@ module.exports.create = function(req,res){
   user.password = sha256(user.salt) + sha256(req.body.password) + sha256(pepper);
   user.firstName = req.body.forename;
   user.lastName = req.body.surname;
-  if(typeof(req.file) != 'undefined'){
-    user.profilePic = req.file.buffer.toString('base64');
-  }
-
-  user.save();
-  res.redirect('/');
+  user.profilePic = req.body.pic;
+  user.save(function(err, user){
+    res.redirect('/');
+  });
 }
 
 module.exports.login = function(req,res){
@@ -50,6 +48,8 @@ module.exports.login = function(req,res){
         // res.cookie('userPic', user.profilePic);
         res.redirect('/');
       }
+    } else {
+      res.redirect('/');
     }
   })
 }
@@ -67,13 +67,17 @@ module.exports.profile = function(req,res){
   })
 }
 
-module.exports.updatePic = function(req,res){
-  var user = JSON.parse(cipher.decrypt(req.cookies.user));
-  console.log(req.body);
-  User.findById(user.id, function(err, user){
-    user.profilePic = req.body.pic
-    user.save(function(err, updatedUser){
-      res.redirect('/user/profile/' + user.id)
-    });
+module.exports.updateProfile = function(req,res){
+  User.findById(req.params.id, function(err,user){
+    if(!(typeof(user) == 'undefined')){
+      user.firstName = req.body.firstName;
+      user.lastName = req.body.surname;
+      user.email = req.body.email;
+      user.profilePic = req.body.pic;
+      console.log(user);
+      user.save(function(err, updatedUser){
+        res.redirect('/')
+      })
+    }
   })
 }

@@ -9,5 +9,6 @@ module.exports = mongoose.model('User', {
   firstName: {type: String},
   lastName: {type: String},
   battletag: {type: String},
-  profilePic: {type: String}
+  profilePic: {type: String},
+  isAdmin: {type: Number, default: 0}
 })

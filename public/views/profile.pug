@@ -1,16 +1,30 @@
 extends ./layout.pug
 
 block content
-  h2 Profile Picture:
-  img#tempPic(src='/img/cutesprays/' + user.profilePic, style="width:100px;height:100px")
-  form(action='/user/updatepic', method='post', encType='multipart/form-data')
-    .form-group
-      label.col-md-3.control-label(for='pic') Profile Picture
-      div.col-md-9
-        input.form-control#profilePic(name='pic', type='text', readonly, style='display:inline;width:75%;float:left')
-        button.btn.btn-fab.btn-fab-mini(type='button', style='float:left', data-toggle="modal" data-target="#picPicker")
-          i.material-icons plus
-    .form-group
-      .col-md-10
-        button.btn.btn-primary(type='submit') Submit
-  include ./picSelector.pug
+  .well
+    form(action='/user/updateProfile/'+user.id, method='post')
+      fieldset
+        legend Profile Details
+        .form-group
+          label.col-md-3.control-label(for='firstName') First Name
+          div.col-md-9
+            input.form-control(name='firstName', value=user.firstName)
+        .form-group
+          label.col-md-3.control-label(for='surname') Last Name
+          div.col-md-9
+            input.form-control(name='surname', value=user.lastName)
+        .form-group
+          label.col-md-3.control-label(for='email') Email
+          div.col-md-9
+            input.form-control(name='email', value=user.email)
+        .form-group
+          label.col-md-3.control-label(for='pic') Profile Picture
+          div.col-md-9
+            input.form-control#profilePic(name='pic', type='text', readonly, style='display:inline;width:75%;float:left', value=user.profilePic)
+            button.btn.btn-fab.btn-fab-mini(type='button', style='float:left', data-toggle="modal" data-target="#picPicker")
+              i.material-icons plus
+            img#tempPic(src='/img/cutesprays/' + user.profilePic, style="width:100px;height:100px")
+        .form-group
+          .col-md-10
+            button.btn.btn-primary(type='submit') Update
+    include ./picSelector.pug

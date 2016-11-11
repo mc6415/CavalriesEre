@@ -64,7 +64,7 @@ app.get('/user/profile/:id', controllers.User.profile);
 
 app.post('/user/create',upload.single('pic'), controllers.User.create);
 app.post('/user/login', controllers.User.login);
-app.post('/user/updatepic',upload.single('pic'), controllers.User.updatePic);
+app.post('/user/updateProfile/:id', controllers.User.updateProfile);
 
 // Listen on port 3000, IP defaults to 127.0.0.1
 app.listen(port, function(){
