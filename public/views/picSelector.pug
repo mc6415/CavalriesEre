@@ -1,0 +1,19 @@
+#picPicker.modal.fade(tabindex='-1', role='dialog', aria-labelledby='picPickerLabel', aria-hidden='true')
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#PicPickerLabel.modal-title Pick a profile Picture
+      .modal-body
+        for pic in pics
+          img(src='/img/cutesprays/' + pic, style='width:8rem;height:8rem;border:1px solid black', onclick='pickPicture("'+pic+'")', data-dismiss='modal')
+      .modal-footer
+        button(type='button', data-dismiss='modal') Close
+script.
+  function pickPicture(pic){
+    //- pic = _.capitalize(pic.split('.')[0])
+    $('#profilePic').val(pic);
+    $('#tempPic').attr('src', '/img/cutesprays/' + pic)
+    console.log(pic);
+  }

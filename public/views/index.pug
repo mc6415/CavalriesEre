@@ -10,10 +10,13 @@ block content
   else if loggedIn
     include ./welcome.pug
   //- h2 Welcome #{user.firstName}!
-  script.
-    $('#showRegister').click(function(){
-          $('#registrationForm').show();
-    })
-    $('#showLogin').click(function(){
-      $('#loginForm').show();
-    })
+  if !loggedIn
+    script.
+      $('#showRegister').click(function(){
+            $('#registrationForm').fadeIn();
+            $('#loginForm').fadeOut();
+      })
+      $('#showLogin').click(function(){
+        $('#loginForm').fadeIn();
+        $('#registrationForm').fadeOut();
+      })

@@ -12,6 +12,7 @@ var port = process.env.PORT || 3000,
     multer = require('multer');
     aes256 = require('aes256');
     User = require('./server/models/user');
+    fs = require('fs');
 
 var log = function(entry) {
     fs.appendFileSync('/tmp/sample-app.log', new Date().toISOString() + ' - ' + entry + '\n');
@@ -40,18 +41,30 @@ const cipher = aes256.createCipher(key);
 
 app.get('/', function(req,res){
   if(isLoggedIn(req)){
-    var user = JSON.parse(cipher.decrypt(req.cookies.user));
+    try{
+      var user = JSON.parse(cipher.decrypt(req.cookies.user));
+    } catch(ex) {
+      res.redirect('/user/signout')
+    }
+    console.log(user);
     User.find({username: user.username}, function(err,docs){
       res.render('index', {loggedIn: true, user: docs[0]})
     })
   } else {
-    res.render('index', {title: 'Welcome to Overwankers'})
+    fs.readdir('./public/img/cutesprays', function(err,files){
+      res.render('index', {title: 'Cheers Love, Cavalries \'ere', pics: files})
+    })
   }
 })
+app.get('/getallpics', function(req,res){
+
+})
 app.get('/user/signout', controllers.User.signout);
+app.get('/user/profile/:id', controllers.User.profile);
 
 app.post('/user/create',upload.single('pic'), controllers.User.create);
 app.post('/user/login', controllers.User.login);
+app.post('/user/updatepic',upload.single('pic'), controllers.User.updatePic);
 
 // Listen on port 3000, IP defaults to 127.0.0.1
 app.listen(port, function(){

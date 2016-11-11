@@ -21,7 +21,7 @@ html
         .logo
           - var defaultLogo = '/img/blankprofile.png'
           if loggedIn
-            - var defaultLogo = 'data:image/png;base64,' + user.profilePic
+            - var defaultLogo = '/img/cutesprays/' + user.profilePic
           img.img-responsive.center-block(src=defaultLogo, alt='Logo', style='width:8rem;height:8rem')
         br
         .left-navigation
