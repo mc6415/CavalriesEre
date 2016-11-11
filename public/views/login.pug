@@ -1,0 +1,14 @@
+div#loginForm(style='display:none').well.col-md-8.col-md-offset-2
+  form.form-horizontal(action='/user/login', method='POST')
+    fieldset
+      legend Login
+    .form-group
+        label.col-md-2.control-label(for='username') Username
+        .col-md-10
+          input.form-control(name='username', type='text')
+    .form-group
+        label.col-md-2.control-label(for='password') Password
+        .col-md-10
+          input.form-control(name='password', type='password')
+    .form-group
+      button.btn.btn-primary(type='submit') Login

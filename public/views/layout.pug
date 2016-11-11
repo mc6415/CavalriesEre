@@ -5,22 +5,49 @@ html
         body, html{
           background-color:#34515E;
         }
+        .sidebarIcon{
+          vertical-align: bottom;
+          width: 3rem;
+        }
+        .sideLink{
+          color: white;
+          margin:0px;
+          display:inline;
+          width:100%
+        }
     .container-fluid
     .row
       .col-md-2.col-sm-4.sidebar1(style='height:100%;padding:0px')
         .logo
-          - var defaultLogo = '/img/bastionCute.png'
+          - var defaultLogo = '/img/blankprofile.png'
           if loggedIn
-            defaultLogo = user.logo
-          img.img-responsive.center-block(src=defaultLogo, alt='Logo', style='width:8rem')
+            - var defaultLogo = 'data:image/png;base64,' + user.profilePic
+          img.img-responsive.center-block(src=defaultLogo, alt='Logo', style='width:8rem;height:8rem')
         br
         .left-navigation
           ul.list
             h5
-              strong OverWankers
-            li#showRegister(style='cursor:pointer') Register
-            li About Us
-            li Discord Server
+              strong Cavalries 'ere
+            if !loggedIn
+              li#showLogin(style='cursor:pointer')
+                i.material-icons.sidebarIcon person
+                p(style='display: inline') Log In
+              li#showRegister(style='cursor:pointer')
+                i.material-icons.sidebarIcon person_add
+                p(style='display: inline') Register
+            else if loggedIn
+              li(style='cursor:pointer')
+                i.material-icons.sideBarIcon person_outline
+                a.sideLink(href='/user/signout') Sign Out
+              li(style='cursor:pointer')
+                i.material-icons.sideBarIcon face
+                a.sideLink(href='/user/profile/'+user._id) Profile
+            li
+              i.material-icons.sidebarIcon info
+              p(style='display: inline') About Us
+            li
+              i.material-icons.sidebarIcon chat
+              p(style='display: inline') Discord Server
           br
           ul.list
             h5

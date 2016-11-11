@@ -5,6 +5,7 @@ module.exports = mongoose.model('User', {
   email: {type: String, unique: true},
   password: {type: String, required: true},
   salt: {type: String, required: true},
+  pepper: {type: String, required: true},
   firstName: {type: String},
   lastName: {type: String},
   battletag: {type: String},

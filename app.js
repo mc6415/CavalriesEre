@@ -10,12 +10,19 @@ var port = process.env.PORT || 3000,
     mongoose = require('mongoose'),
     cookieParser = require('cookie-parser'),
     multer = require('multer');
+    aes256 = require('aes256');
+    User = require('./server/models/user');
 
 var log = function(entry) {
     fs.appendFileSync('/tmp/sample-app.log', new Date().toISOString() + ' - ' + entry + '\n');
 };
 
-mongoose.connect('mongodb://sa:pass@52.209.245.166:27018/overwankers');
+var isLoggedIn = function(req){
+  var loggedIn = (typeof(req.cookies.user) == 'undefined');
+  return !loggedIn;
+}
+
+mongoose.connect('mongodb://sa:pass@52.209.245.166:27018/cavalriesere');
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/public/views');
 
@@ -28,11 +35,23 @@ app.use('/js', express.static(__dirname + '/public/js'));
 app.use('/css', express.static(__dirname + '/public/css'));
 app.use('/img', express.static(__dirname + '/public/img'));
 
+const key = 'userToken';
+const cipher = aes256.createCipher(key);
+
 app.get('/', function(req,res){
-  res.render('index', {title: 'Welcome to Overwankers'})
+  if(isLoggedIn(req)){
+    var user = JSON.parse(cipher.decrypt(req.cookies.user));
+    User.find({username: user.username}, function(err,docs){
+      res.render('index', {loggedIn: true, user: docs[0]})
+    })
+  } else {
+    res.render('index', {title: 'Welcome to Overwankers'})
+  }
 })
+app.get('/user/signout', controllers.User.signout);
 
 app.post('/user/create',upload.single('pic'), controllers.User.create);
+app.post('/user/login', controllers.User.login);
 
 // Listen on port 3000, IP defaults to 127.0.0.1
 app.listen(port, function(){

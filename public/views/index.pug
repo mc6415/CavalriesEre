@@ -6,7 +6,14 @@ block header
 block content
   if !loggedIn
     include ./register.pug
+    include ./login.pug
+  else if loggedIn
+    include ./welcome.pug
+  //- h2 Welcome #{user.firstName}!
   script.
     $('#showRegister').click(function(){
           $('#registrationForm').show();
+    })
+    $('#showLogin').click(function(){
+      $('#loginForm').show();
     })

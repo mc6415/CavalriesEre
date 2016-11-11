@@ -8,6 +8,10 @@
     transform: translate3d(-50%, -50%, 0);
 }
 
+h1,h2,h3{
+  color: white
+}
+
 .regbutton{
     height: 50px;
     width: 200px;

@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const sha256 = require('sha256');
 const randomstring = require('randomstring');
+const aes256 = require('aes256');
 
 module.exports.create = function(req,res){
   const user = new User();
@@ -22,25 +23,35 @@ module.exports.create = function(req,res){
   res.redirect('/');
 }
 
+module.exports.login = function(req,res){
+  console.log(req.body);
+  User.find({username: req.body.username}, function(err,docs){
+    if(docs.length > 0){
+      const user = docs[0];
+      const salt = sha256(user.salt);
+      const pepper = sha256(user.pepper);
+      const passwordEntry = salt + sha256(req.body.password) + pepper;
+      if(passwordEntry == user.password){
+        const userToken = {
+          "id": user._id,
+          "username": user.username,
+          "firstName": user.firstName,
+          "lastName": user.lastName,
+          "email": user.email
+        };
+        const key = 'userToken';
+        const cipher = aes256.createCipher(key);
+        const enc = cipher.encrypt(JSON.stringify(userToken));
+        console.log(enc);
+        res.cookie('user', enc);
+        // res.cookie('userPic', user.profilePic);
+        res.redirect('/');
+      }
+    }
+  })
+}
 
-// module.exports.login = function(req,res){
-//     User.find({'username' : req.body.username}, function(err, docs){
-//       if(docs.length > 0){
-//         var pass = sha256(docs[0].salt) + sha256(req.body.password);
-//         if(pass == docs[0].password){
-//           var uid = docs[0]._id;
-//           res.cookie('user', JSON.stringify(docs[0]));
-//           res.redirect('/');
-//         } else {
-//           res.redirect('/error')
-//         }
-//       } else {
-//         res.redirect('/error')
-//       }
-//     })
-// }
-//
-// module.exports.SignOut = function(req,res){
-//   res.clearCookie('user');
-//   res.status(201).redirect('/');
-// }
+module.exports.signout = function(req,res){
+  res.clearCookie('user');
+  res.redirect('/');
+}

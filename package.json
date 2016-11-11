@@ -5,6 +5,7 @@
   "description": "A Fledgling Overwatch community",
   "author": "Michael Coombes",
   "dependencies": {
+    "aes256": "^1.0.2",
     "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
