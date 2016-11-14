@@ -61,7 +61,7 @@ app.get('/', function(req,res){
       Discussion.find({}).populate('createdBy').exec(function(err,docs){
         res.render('index', {loggedIn: true, user: user, discussions: docs})
       })
-    })  
+    })
   } else {
     fs.readdir('./public/img/cutesprays', function(err,files){
       res.render('index', {title: 'Cheers Love, Cavalries \'ere', pics: files})
