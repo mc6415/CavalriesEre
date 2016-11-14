@@ -86,6 +86,8 @@ app.get('/', function(req,res){
 
 app.get('/user/signout', controllers.User.signout);
 app.get('/user/profile/:id', controllers.User.profile);
+app.get('/discussion/viewDiscussion/:id', controllers.Discussion.viewDiscussion);
+app.get('/message/remove/:id', controllers.Message.remove);
 
 app.get('/discussion/start', function(req,res){
   if(isLoggedIn(req)){
@@ -101,6 +103,7 @@ app.post('/user/create',upload.single('pic'), controllers.User.create);
 app.post('/user/login', controllers.User.login);
 app.post('/user/updateProfile/:id', controllers.User.updateProfile);
 app.post('/discussion/create/:id', controllers.Discussion.create);
+app.post('/discussion/addMessage/:id', controllers.Discussion.addMessage);
 
 // Listen on port 3000, IP defaults to 127.0.0.1
 app.listen(port, function(){

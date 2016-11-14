@@ -14,5 +14,7 @@ h2 Welcome #{user.firstName}
           td #{d.title}
           td #{d.createdBy.firstName}
           td #{d.createdOn.toLocaleDateString()}
+          td
+            a.btn.btn-primary(href='/discussion/viewDiscussion/' + d._id) View
 .col-xs-5.col-xs-offset-2
   h1 LOGGED IN

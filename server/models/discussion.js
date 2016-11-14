@@ -5,7 +5,8 @@ var Schema = mongoose.Schema;
 var discussionSchema = new Schema({
   title: String,
   createdBy: {type: Schema.Types.ObjectId, ref: 'User'},
-  createdOn: Date
+  createdOn: Date,
+  messages: [{type: Schema.Types.ObjectId, ref:"Message"}]
 })
 
 module.exports = mongoose.model('Discussion', discussionSchema);

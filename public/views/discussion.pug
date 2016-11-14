@@ -1,0 +1,30 @@
+extends ./layout.pug
+
+block content
+  h1=discussion.title
+  for msg in discussion.messages
+    h4 #{msg.createdBy.firstName} #{msg.createdBy.lastName}
+      a(href='/message/remove/' + msg._id)
+        i.material-icons do_not_disturb_on
+    h5=msg.body
+  .col-xs-12#addMessage(style='display:none')
+    form(action='/discussion/addMessage/' + discussion._id, method='post')
+      fieldset
+        legend Add Message
+        .form-group
+          input.form-control(name='message')
+        .form-group
+          button.btn(type='submit') Add Message
+  br
+  button.btn.btn-fab#addMessageBtn(style='background-color:grey')
+    i.material-icons#addIcon add
+  script.
+    $('#addMessageBtn').click(function(){
+      if($('#addMessage').css('display') == 'none'){
+        $('#addMessage').slideDown();
+        $('#addIcon').text('arrow_drop_up');
+      } else {
+        $('#addMessage').slideUp();
+        $('#addIcon').text('add');
+      }
+    })
