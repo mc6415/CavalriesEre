@@ -1,1 +1,18 @@
 h2 Welcome #{user.firstName}
+
+.col-xs-5.dashboardPanel
+  h1 NEW TOPICS
+  table.table
+    thead
+      tr
+        td title
+        td Created By
+        td Created On
+    tbody
+      for d in discussions
+        tr
+          td #{d.title}
+          td #{d.createdBy.firstName}
+          td #{d.createdOn.toLocaleDateString()}
+.col-xs-5.col-xs-offset-2
+  h1 LOGGED IN

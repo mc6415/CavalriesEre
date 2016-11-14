@@ -12,6 +12,7 @@ var port = process.env.PORT || 3000,
     multer = require('multer');
     aes256 = require('aes256');
     User = require('./server/models/user');
+    Discussion = require('./server/models/discussion');
     fs = require('fs');
     sassMiddleware = require('node-sass-middleware');
 
@@ -46,8 +47,6 @@ app.use('/js', express.static(__dirname + '/public/js'));
 app.use('/css', express.static(__dirname + '/public/css'));
 app.use('/img', express.static(__dirname + '/public/img'));
 
-
-
 const key = 'userToken';
 const cipher = aes256.createCipher(key);
 
@@ -58,25 +57,35 @@ app.get('/', function(req,res){
     } catch(ex) {
       res.redirect('/user/signout')
     }
-    console.log(user);
-    User.find({username: user.username}, function(err,docs){
-      res.render('index', {loggedIn: true, user: docs[0]})
-    })
+    User.findById(user.id, function(err, user){
+      Discussion.find({}).populate('createdBy').exec(function(err,docs){
+        res.render('index', {loggedIn: true, user: user, discussions: docs})
+      })
+    })  
   } else {
     fs.readdir('./public/img/cutesprays', function(err,files){
       res.render('index', {title: 'Cheers Love, Cavalries \'ere', pics: files})
     })
   }
 })
-app.get('/getallpics', function(req,res){
 
-})
 app.get('/user/signout', controllers.User.signout);
 app.get('/user/profile/:id', controllers.User.profile);
 
+app.get('/discussion/start', function(req,res){
+  if(isLoggedIn(req)){
+    const user = JSON.parse(cipher.decrypt(req.cookies.user));
+    res.render('discussionStart', {loggedIn: true, user: user})
+  } else {
+    res.redirect('/')
+  }
+})
+
+app.post('/discussion/getAll', controllers.Discussion.getAll);
 app.post('/user/create',upload.single('pic'), controllers.User.create);
 app.post('/user/login', controllers.User.login);
 app.post('/user/updateProfile/:id', controllers.User.updateProfile);
+app.post('/discussion/create/:id', controllers.Discussion.create);
 
 // Listen on port 3000, IP defaults to 127.0.0.1
 app.listen(port, function(){

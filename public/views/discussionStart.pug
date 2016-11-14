@@ -1,0 +1,14 @@
+extends ./layout.pug
+
+block content
+  h1 Welcome, #{user.firstName} #{user.lastName}!
+  form(action='/discussion/create/' + user.id, method='post')
+    fieldset
+      legend Start a Discussion!
+      .form-group
+        label.col-md-3(for='title') Title
+        .col-md-8
+          input#title.form-control(name='title')
+      .form-group
+        .col-md-8.col-md-offset-2
+          button.btn.btn-primary(type='submit') Submit

@@ -38,7 +38,8 @@ module.exports.login = function(req,res){
           "username": user.username,
           "firstName": user.firstName,
           "lastName": user.lastName,
-          "email": user.email
+          "email": user.email,
+          "profilePic": user.profilePic
         };
         const key = 'userToken';
         const cipher = aes256.createCipher(key);
