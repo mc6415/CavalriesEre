@@ -14,39 +14,51 @@ var port = process.env.PORT || 3000,
     User = require('./server/models/user');
     Discussion = require('./server/models/discussion');
     fs = require('fs');
-    sassMiddleware = require('node-sass-middleware');
 
+// This is nasty I know. doing this checking app.settings.env didn't work
+// and npm install was failing on node-sass on my AWS instance.
+try{
+  const sassMiddleware = require('node-sass-middleware');
+  app.use(sassMiddleware({
+    src: __dirname + '/public/sass',
+    dest: __dirname + '/public/css',
+    debug: true,
+    outputStyle: 'compressed',
+    prefix:'/css'
+  }))
+} catch(ex){
+
+}
+
+// Added a line to the log that shows which Environment node is running in
 var log = function(entry) {
+    fs.appendFileSync('/tmp/sample-app.log', 'ENVIRONMENT IS ' + app.settings.env);
     fs.appendFileSync('/tmp/sample-app.log', new Date().toISOString() + ' - ' + entry + '\n');
 };
 
+// Quick check to see if user is logged in.
 var isLoggedIn = function(req){
   var loggedIn = (typeof(req.cookies.user) == 'undefined');
   return !loggedIn;
 }
-app.use(sassMiddleware({
-  src: __dirname + '/public/sass',
-  dest: __dirname + '/public/css',
-  debug: true,
-  outputStyle: 'compressed',
-  prefix:'/css'
-}))
+
+// Connect to my MongoDB instance running on an EC2 instance
 mongoose.connect('mongodb://sa:pass@52.209.245.166:27018/cavalriesere');
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/public/views');
-
-
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 var upload = multer({storage: multer.memoryStorage({}) });
-// app.use(express.static(__dirname + '/public'));
+
 app.use('/', express.static(__dirname + '/public/views'));
 app.use('/js', express.static(__dirname + '/public/js'));
 app.use('/css', express.static(__dirname + '/public/css'));
 app.use('/img', express.static(__dirname + '/public/img'));
 
+// Create a cipher for encrypting and decrypting the user cookie, avoids
+// setting details in plain text.
 const key = 'userToken';
 const cipher = aes256.createCipher(key);
 
@@ -55,6 +67,9 @@ app.get('/', function(req,res){
     try{
       var user = JSON.parse(cipher.decrypt(req.cookies.user));
     } catch(ex) {
+      // I did some changing of the user token with encryption, this made people
+      // with the old token unable to load the site, this now takes them
+      // to sign out and removes the cookie, allowing them to access again.
       res.redirect('/user/signout')
     }
     User.findById(user.id, function(err, user){
