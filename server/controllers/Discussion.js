@@ -1,5 +1,5 @@
 const Discussion = require('../models/discussion');
-
+// This is not the complete implementation this was merely testing MongoDB refs
 module.exports.create = function(req,res){
   const disc = new Discussion();
   disc.createdOn = new Date();
