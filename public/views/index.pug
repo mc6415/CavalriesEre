@@ -13,10 +13,10 @@ block content
   if !loggedIn
     script.
       $('#showRegister').click(function(){
-            $('#registrationForm').fadeIn();
-            $('#loginForm').fadeOut();
+            $('#registrationForm').slideDown();
+            $('#loginForm').hide();
       })
       $('#showLogin').click(function(){
-        $('#loginForm').fadeIn();
-        $('#registrationForm').fadeOut();
+        $('#loginForm').slideDown();
+        $('#registrationForm').hide();
       })

@@ -13,6 +13,7 @@ var port = process.env.PORT || 3000,
     aes256 = require('aes256');
     User = require('./server/models/user');
     fs = require('fs');
+    sassMiddleware = require('node-sass-middleware');
 
 var log = function(entry) {
     fs.appendFileSync('/tmp/sample-app.log', new Date().toISOString() + ' - ' + entry + '\n');
@@ -22,19 +23,30 @@ var isLoggedIn = function(req){
   var loggedIn = (typeof(req.cookies.user) == 'undefined');
   return !loggedIn;
 }
-
+app.use(sassMiddleware({
+  src: __dirname + '/public/sass',
+  dest: __dirname + '/public/css',
+  debug: true,
+  outputStyle: 'compressed',
+  prefix:'/css'
+}))
 mongoose.connect('mongodb://sa:pass@52.209.245.166:27018/cavalriesere');
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/public/views');
+
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 var upload = multer({storage: multer.memoryStorage({}) });
+// app.use(express.static(__dirname + '/public'));
 app.use('/', express.static(__dirname + '/public/views'));
 app.use('/js', express.static(__dirname + '/public/js'));
 app.use('/css', express.static(__dirname + '/public/css'));
 app.use('/img', express.static(__dirname + '/public/img'));
+
+
 
 const key = 'userToken';
 const cipher = aes256.createCipher(key);

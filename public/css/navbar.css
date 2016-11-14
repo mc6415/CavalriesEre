@@ -1,13 +1,14 @@
 .sidebar1 {
     background: #F17153;
     /* For browsers that do not support gradients */
-    background: -webkit-linear-gradient(#F17153, #F58D63, #f1ab53);
+    background: -webkit-linear-gradient(#F4511E, #FF7043, #FFAB91);
     /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(#F17153, #F58D63, #f1ab53);
+    background: -o-linear-gradient(#FFA726, #FFCC80, #FFF3E0);
     /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(#F17153, #F58D63, #f1ab53);
+    background: -moz-linear-gradient(#FFA726, #FFCC80, #FFF3E0);
     /* For Firefox 3.6 to 15 */
-    background: linear-gradient(#F17153, #F58D63, #f1ab53);
+    background: linear-gradient(#F4511E, #FF7043, #FFAB91    /* Standard syntax */
+);
     /* Standard syntax */
     padding: 0px;
     min-height: 100%;
