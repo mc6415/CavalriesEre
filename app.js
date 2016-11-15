@@ -94,11 +94,7 @@ app.get('/discussion/viewDiscussion/:id', restrict, controllers.Discussion.viewD
 app.get('/message/remove/:id', restrict, controllers.Message.remove);
 
 app.get('/discussion/start', restrict, function(req,res){
-  if(isLoggedIn(req)){
     res.render('discussionStart', {loggedIn: true, user: req.session.user})
-  } else {
-    res.redirect('/')
-  }
 })
 
 app.post('/discussion/getAll', restrict, controllers.Discussion.getAll);
