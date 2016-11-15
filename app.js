@@ -10,10 +10,11 @@ var port = process.env.PORT || 3000,
     mongoose = require('mongoose'),
     cookieParser = require('cookie-parser'),
     multer = require('multer');
-    aes256 = require('aes256');
     User = require('./server/models/user');
     Discussion = require('./server/models/discussion');
     fs = require('fs');
+    session = require('express-session');
+    MongoStore = require('connect-mongo/es5')(session);
 
 // This is nasty I know. doing this checking app.settings.env didn't work
 // and npm install was failing on node-sass on my AWS instance.
@@ -38,8 +39,9 @@ var log = function(entry) {
 
 // Quick check to see if user is logged in.
 var isLoggedIn = function(req){
-  var loggedIn = (typeof(req.cookies.user) == 'undefined');
-  return !loggedIn;
+  if(req.session.user) return true;
+
+  return false;
 }
 
 // Connect to my MongoDB instance running on an EC2 instance
@@ -47,35 +49,37 @@ mongoose.connect('mongodb://sa:pass@52.209.245.166:27018/cavalriesere');
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/public/views');
 
+// setup middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
+
+app.use(session({
+  store: new MongoStore({mongooseConnection: mongoose.connection}),
+  secret: "The line must be drawn here!",
+  resave: false
+}))
+
 var upload = multer({storage: multer.memoryStorage({}) });
 
+// Setup shorthand static file locations
 app.use('/', express.static(__dirname + '/public/views'));
 app.use('/js', express.static(__dirname + '/public/js'));
 app.use('/css', express.static(__dirname + '/public/css'));
 app.use('/img', express.static(__dirname + '/public/img'));
 
-// Create a cipher for encrypting and decrypting the user cookie, avoids
-// setting details in plain text.
-const key = 'userToken';
-const cipher = aes256.createCipher(key);
+function restrict(req,res,next){
+  if(req.session.user){
+    next();
+  } else {
+    res.send("You are not authorised to view this area");
+  }
+}
 
 app.get('/', function(req,res){
   if(isLoggedIn(req)){
-    try{
-      var user = JSON.parse(cipher.decrypt(req.cookies.user));
-    } catch(ex) {
-      // I did some changing of the user token with encryption, this made people
-      // with the old token unable to load the site, this now takes them
-      // to sign out and removes the cookie, allowing them to access again.
-      res.redirect('/user/signout')
-    }
-    User.findById(user.id, function(err, user){
-      Discussion.find({}).populate('createdBy').exec(function(err,docs){
-        res.render('index', {loggedIn: true, user: user, discussions: docs})
-      })
+    Discussion.find({}).populate('createdBy').exec(function(err,docs){
+      res.render('index', {loggedIn: true, user: req.session.user, discussions: docs})
     })
   } else {
     fs.readdir('./public/img/cutesprays', function(err,files){
@@ -84,24 +88,23 @@ app.get('/', function(req,res){
   }
 })
 
-app.get('/user/signout', controllers.User.signout);
-app.get('/user/profile/:id', controllers.User.profile);
-app.get('/discussion/viewDiscussion/:id', controllers.Discussion.viewDiscussion);
-app.get('/message/remove/:id', controllers.Message.remove);
+app.get('/user/signout', restrict, controllers.User.signout);
+app.get('/user/profile', restrict, controllers.User.profile);
+app.get('/discussion/viewDiscussion/:id', restrict, controllers.Discussion.viewDiscussion);
+app.get('/message/remove/:id', restrict, controllers.Message.remove);
 
-app.get('/discussion/start', function(req,res){
+app.get('/discussion/start', restrict, function(req,res){
   if(isLoggedIn(req)){
-    const user = JSON.parse(cipher.decrypt(req.cookies.user));
-    res.render('discussionStart', {loggedIn: true, user: user})
+    res.render('discussionStart', {loggedIn: true, user: req.session.user})
   } else {
     res.redirect('/')
   }
 })
 
-app.post('/discussion/getAll', controllers.Discussion.getAll);
+app.post('/discussion/getAll', restrict, controllers.Discussion.getAll);
 app.post('/user/create',upload.single('pic'), controllers.User.create);
 app.post('/user/login', controllers.User.login);
-app.post('/user/updateProfile/:id', controllers.User.updateProfile);
+app.post('/user/updateProfile', restrict, controllers.User.updateProfile);
 app.post('/discussion/create/:id', controllers.Discussion.create);
 app.post('/discussion/addMessage/:id', controllers.Discussion.addMessage);
 

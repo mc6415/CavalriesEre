@@ -1,6 +1,6 @@
 html
   include ./head.pug
-  body        
+  body
     .container-fluid
     .row
       .col-md-2.col-sm-4.sidebar1(style='height:100%;padding:0px')
@@ -31,7 +31,7 @@ html
                 a.sideLink(href='/user/signout') Sign Out
               li(style='cursor:pointer')
                 i.material-icons.sideBarIcon face
-                a.sideLink(href='/user/profile/'+user._id) Profile
+                a.sideLink(href='/user/profile') Profile
             li
               i.material-icons.sidebarIcon info
               p(style='display: inline') About Us

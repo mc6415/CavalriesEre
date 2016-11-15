@@ -1,9 +1,7 @@
 const User = require('../models/user');
 const sha256 = require('sha256');
 const randomstring = require('randomstring');
-const aes256 = require('aes256');
 const key = 'userToken';
-const cipher = aes256.createCipher(key);
 const fs = require('fs');
 
 module.exports.create = function(req,res){
@@ -25,28 +23,12 @@ module.exports.create = function(req,res){
 }
 
 module.exports.login = function(req,res){
-  console.log(req.body);
   User.find({username: req.body.username}, function(err,docs){
     if(docs.length > 0){
       const user = docs[0];
-      const salt = sha256(user.salt);
-      const pepper = sha256(user.pepper);
-      const passwordEntry = salt + sha256(req.body.password) + pepper;
+      const passwordEntry = sha256(user.salt) + sha256(req.body.password) + sha256(user.pepper);
       if(passwordEntry == user.password){
-        const userToken = {
-          "id": user._id,
-          "username": user.username,
-          "firstName": user.firstName,
-          "lastName": user.lastName,
-          "email": user.email,
-          "profilePic": user.profilePic
-        };
-        const key = 'userToken';
-        const cipher = aes256.createCipher(key);
-        const enc = cipher.encrypt(JSON.stringify(userToken));
-        console.log(enc);
-        res.cookie('user', enc);
-        // res.cookie('userPic', user.profilePic);
+        req.session.user = user;
         res.redirect('/');
       }
     } else {
@@ -56,27 +38,26 @@ module.exports.login = function(req,res){
 }
 
 module.exports.signout = function(req,res){
-  res.clearCookie('user');
-  res.redirect('/');
+  req.session.destroy(function(){
+    res.redirect('/');
+  })
 }
 
 module.exports.profile = function(req,res){
-  User.find({"_id" : req.params.id}, function(err, docs){
-    fs.readdir('./public/img/cutesprays', function(err,files){
-      res.render('profile', {user: docs[0], loggedIn: true, pics: files})
-    })
+  fs.readdir('./public/img/cutesprays', function(err,files){
+    res.render('profile', {user:req.session.user, loggedIn: true, pics: files})
   })
 }
 
 module.exports.updateProfile = function(req,res){
-  User.findById(req.params.id, function(err,user){
+  User.findById(req.session.user._id, function(err,user){
     if(!(typeof(user) == 'undefined')){
       user.firstName = req.body.firstName;
       user.lastName = req.body.surname;
       user.email = req.body.email;
       user.profilePic = req.body.pic;
-      console.log(user);
       user.save(function(err, updatedUser){
+        req.session.user = user;
         res.redirect('/')
       })
     }
